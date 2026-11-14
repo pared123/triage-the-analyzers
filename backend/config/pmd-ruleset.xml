@@ -16,6 +16,14 @@
         <!-- D2: narrowed below, not dropped. -->
         <exclude name="UncommentedEmptyConstructor"/>
         <exclude name="UnnecessaryConstructor"/>
+        <!-- D4: GuardLogStatement is off. Project Pulse logs only through SLF4J with {} placeholders,
+             so the message string is built only when the level is enabled; the guard would save
+             nothing but evaluating the arguments. All 4 findings on 2026-11-01 passed plain getters
+             or size() (student.getEmail(), templates.size(), authentication.getName(), ...), and 3
+             of the 4 are at info or error, which are on in production, so an isXEnabled() guard
+             there would always be true. Check: grep for LoggerFactory finds only org.slf4j loggers,
+             and no log call in backend/src/main builds its message by string concatenation. -->
+        <exclude name="GuardLogStatement"/>
     </rule>
 
     <!-- D2: UncommentedEmptyConstructor and UnnecessaryConstructor are off in JPA entities and enforced
