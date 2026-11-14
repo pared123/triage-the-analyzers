@@ -2,16 +2,22 @@ package team.projectpulse.rubric;
 
 import org.springframework.data.jpa.domain.Specification;
 
-public class CriterionSpecs {
+import java.util.Locale;
+
+public final class CriterionSpecs {
+
+    private CriterionSpecs() {
+        // Static factory methods only; not meant to be instantiated.
+    }
 
     public static Specification<Criterion> containsCriterion(String providedCriterion) {
         return (root, query, criteriaBuilder) ->
-                criteriaBuilder.like(criteriaBuilder.lower(root.get("criterion")), "%" + providedCriterion.toLowerCase() + "%");
+                criteriaBuilder.like(criteriaBuilder.lower(root.get("criterion")), "%" + providedCriterion.toLowerCase(Locale.ROOT) + "%");
     }
 
     public static Specification<Criterion> containsDescription(String providedDescription) {
         return (root, query, criteriaBuilder) ->
-                criteriaBuilder.like(criteriaBuilder.lower(root.get("description")), "%" + providedDescription.toLowerCase() + "%");
+                criteriaBuilder.like(criteriaBuilder.lower(root.get("description")), "%" + providedDescription.toLowerCase(Locale.ROOT) + "%");
     }
 
     public static Specification<Criterion> belongsToCourse(Integer courseId) {

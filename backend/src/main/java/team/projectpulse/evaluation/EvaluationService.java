@@ -254,7 +254,10 @@ public class EvaluationService {
         Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
 
         // If the user is a student, do not include private comments in the summaries
-        if (authentication.getAuthorities().stream().anyMatch(a -> a.getAuthority().equals("ROLE_student"))) {
+        // Keep the receiver first. Authorities come from JwtGrantedAuthoritiesConverter as SimpleGrantedAuthority, which
+        // rejects an empty role, so getAuthority() is never null here. If one ever were, this throws and nothing leaks;
+        // "ROLE_student".equals(...) would quietly answer false and send a student the private comments.
+        if (authentication.getAuthorities().stream().anyMatch(a -> a.getAuthority().equals("ROLE_student"))) { // NOPMD - LiteralsFirstInComparisons: fail closed, see above
             peerEvaluationAverages.forEach(peerEvaluationAverage -> peerEvaluationAverage.setPrivateComments(null));
         }
 

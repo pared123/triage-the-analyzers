@@ -7,4 +7,25 @@
 
      Unlike the baseline, this file may grow, but every entry is a reviewed decision. -->
 <FindBugsFilter>
+    <!-- D1: EI_EXPOSE_REP and EI_EXPOSE_REP2 are off for the whole project.
+         All 219 findings on 2026-11-01 were one of three shapes, and in none of them does the class
+         own the object it was handed or hands out:
+         1. JPA entity getters and setters for an association or a collection (Course.getSections(),
+            Team.setSection(), ...). The entity graph is shared by design, and the code depends on the
+            live collection: 17 call sites mutate through a getter, for example TeamService.transferStudent
+            (from.getStudents().remove / to.getStudents().add) and Section.addInstructor
+            (instructor.getSections().add). A defensive copy would make those writes silently vanish.
+         2. Constructor injection of Spring singletons (EvaluationController(EvaluationService, ...)).
+            Sharing the one bean instance is the point of dependency injection.
+         3. Request/response DTO records and report POJOs, built and serialized within one request.
+            EvaluationService.generateWeeklyPeerEvaluationReportForSection fills its report through
+            report.getPeerEvaluationAverages().add(...), so a copying getter would return an empty report.
+         Check: every EI entry deleted from spotbugs-baseline.xml names an @Entity, a Spring bean
+         constructor, a record under a dto package, or a report/result POJO. -->
+    <Match>
+        <Or>
+            <Bug pattern="EI_EXPOSE_REP"/>
+            <Bug pattern="EI_EXPOSE_REP2"/>
+        </Or>
+    </Match>
 </FindBugsFilter>
