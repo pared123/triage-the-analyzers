@@ -13,5 +13,30 @@
          xsi:schemaLocation="http://pmd.sourceforge.net/ruleset/2.0.0 https://pmd.sourceforge.io/ruleset_2_0_0.xsd">
     <description>PMD quickstart, with Project Pulse's decisions.</description>
     <rule ref="rulesets/java/quickstart.xml">
+        <!-- D2: narrowed below, not dropped. -->
+        <exclude name="UncommentedEmptyConstructor"/>
+        <exclude name="UnnecessaryConstructor"/>
+    </rule>
+
+    <!-- D2: UncommentedEmptyConstructor and UnnecessaryConstructor are off in JPA entities and enforced
+         everywhere else. 34 of the 40 findings on 2026-11-01 were the no-arg constructor of an @Entity.
+         The JPA spec requires every entity to have one (public or protected), and Hibernate calls it
+         reflectively, so it is never "unnecessary": deleting it, which is what UnnecessaryConstructor
+         asks, compiles today and fails at startup the day someone adds a second constructor. A comment
+         in each would only repeat what @Entity already says. The other 6 findings were in plain
+         classes (PeerEvaluationAverage, RatingAverage, WeeklyPeerEvaluationReport, Result) where
+         nothing needs the empty constructor; those were fixed, and the rules stay on for such classes.
+         Check: the XPath matches a constructor only inside a class annotated @Entity. -->
+    <rule ref="category/java/documentation.xml/UncommentedEmptyConstructor">
+        <properties>
+            <property name="violationSuppressXPath"
+                      value="./ancestor::ClassDeclaration[ModifierList/Annotation[@SimpleName = 'Entity']]"/>
+        </properties>
+    </rule>
+    <rule ref="category/java/codestyle.xml/UnnecessaryConstructor">
+        <properties>
+            <property name="violationSuppressXPath"
+                      value="./ancestor::ClassDeclaration[ModifierList/Annotation[@SimpleName = 'Entity']]"/>
+        </properties>
     </rule>
 </ruleset>
