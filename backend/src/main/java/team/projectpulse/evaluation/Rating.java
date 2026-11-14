@@ -1,5 +1,6 @@
 package team.projectpulse.evaluation;
 
+import edu.umd.cs.findbugs.annotations.SuppressFBWarnings;
 import team.projectpulse.rubric.Criterion;
 import jakarta.persistence.*;
 
@@ -19,11 +20,13 @@ public class Rating {
     public Rating() {
     }
 
+    @SuppressFBWarnings(value = "CT_CONSTRUCTOR_THROW", justification = "The throw is the score validation in setActualScore, on purpose. CT_CONSTRUCTOR_THROW guards against a finalizer attack, which needs untrusted code in the JVM to subclass Rating; Project Pulse loads none. Its fixes do not apply: JPA forbids a final entity, and a final finalize() is deprecated for removal.")
     public Rating(Criterion criterion, Double actualScore) {
         this.criterion = criterion;
         setActualScore(actualScore);
     }
 
+    @SuppressFBWarnings(value = "CT_CONSTRUCTOR_THROW", justification = "The throw is the score validation in setActualScore, on purpose. CT_CONSTRUCTOR_THROW guards against a finalizer attack, which needs untrusted code in the JVM to subclass Rating; Project Pulse loads none. Its fixes do not apply: JPA forbids a final entity, and a final finalize() is deprecated for removal.")
     public Rating(Integer ratingId, Criterion criterion, Double actualScore) {
         this.ratingId = ratingId;
         this.criterion = criterion;
