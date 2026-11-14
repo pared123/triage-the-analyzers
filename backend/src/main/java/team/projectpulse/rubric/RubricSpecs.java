@@ -4,7 +4,11 @@ import org.springframework.data.jpa.domain.Specification;
 
 import java.util.Locale;
 
-public class RubricSpecs {
+public final class RubricSpecs {
+
+    private RubricSpecs() {
+        // Static factory methods only; not meant to be instantiated.
+    }
 
     public static Specification<Rubric> containsRubricName(String providedRubricName) {
         return (root, query, criteriaBuilder) ->

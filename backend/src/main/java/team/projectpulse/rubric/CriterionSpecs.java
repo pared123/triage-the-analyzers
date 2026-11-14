@@ -4,7 +4,11 @@ import org.springframework.data.jpa.domain.Specification;
 
 import java.util.Locale;
 
-public class CriterionSpecs {
+public final class CriterionSpecs {
+
+    private CriterionSpecs() {
+        // Static factory methods only; not meant to be instantiated.
+    }
 
     public static Specification<Criterion> containsCriterion(String providedCriterion) {
         return (root, query, criteriaBuilder) ->
